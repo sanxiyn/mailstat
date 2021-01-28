@@ -1,0 +1,2 @@
+HOME=/home/ubuntu
+0-59/10 * * * * python3 $HOME/mailstat.py

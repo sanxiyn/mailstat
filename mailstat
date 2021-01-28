@@ -1,0 +1,17 @@
+sources = [{
+    name = "sanxiyn@gmail.com"
+    type = imap
+    host = imap.gmail.com
+    username = sanxiyn
+    password = password
+    folder = INBOX
+    search = "UNSEEN SINCE 2021-01-01"
+}]
+
+targets = [{
+    type = influxdb
+    url = "https://us-west-2-1.aws.cloud2.influxdata.com"
+    token = "token"
+    org = "sanxiyn@gmail.com"
+    bucket = Mail
+}]
