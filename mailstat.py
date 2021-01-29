@@ -24,7 +24,8 @@ def imap_source(source, account):
     import imapclient
     client = imapclient.IMAPClient(account["host"])
     client.login(account["username"], account["password"])
-    client.select_folder(source["folder"])
+    folder = source.get("folder", "INBOX")
+    client.select_folder(folder)
     messages = client.search(parse_search(source["search"]))
     return len(messages)
 
