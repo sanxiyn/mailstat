@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import os.path
 import re
@@ -46,8 +47,20 @@ def influxdb_target(target, result):
     write_api = client.write_api(SYNCHRONOUS)
     write_api.write(target["bucket"], target["org"], format_influxdb(result))
 
+def format_stdout(result):
+    lines = []
+    for name in result:
+        value = result[name]
+        line = f"{name} {value}"
+        lines.append(line)
+    return "\n".join(lines)
+
+def stdout_target(target, result):
+    print(format_stdout(result))
+
 target_registry = {
     "influxdb": influxdb_target,
+    "stdout": stdout_target,
 }
 
 def process_sources(sources):
@@ -67,7 +80,17 @@ def process_targets(targets, result):
         process_target(target, result)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--test", metavar="ACCOUNT")
+    args = parser.parse_args()
     config_path = os.path.expanduser(MAILSTAT_CONFIG)
     config = pyhocon.ConfigFactory.parse_file(config_path)
-    result = process_sources(config["sources"])
-    process_targets(config["targets"], result)
+    if args.test:
+        sources = [source for source in config["sources"]
+                   if source["name"] == args.test]
+        targets = [{"type": "stdout"}]
+    else:
+        sources = config["sources"]
+        targets = config["targets"]
+    result = process_sources(sources)
+    process_targets(targets, result)
