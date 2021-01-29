@@ -1,19 +1,31 @@
-sources = [{
+accounts = [{
     name = "sanxiyn@gmail.com"
     type = imap
     host = imap.gmail.com
     username = sanxiyn
     password = password
-    folder = INBOX
-    search = "UNSEEN SINCE 2021-01-01"
 }]
 
-sources += [{
+accounts += [{
     name = "thomas.x@kakaocorp.com"
     type = imap
     host = imap.kakaocorp.com
     username = "thomas.x@kakaocorp.com"
     password = password
+}]
+
+sources = [{
+    name = Gmail
+    type = imap
+    account = "sanxiyn@gmail.com"
+    folder = INBOX
+    search = "UNSEEN SINCE 2021-01-01"
+}]
+
+sources += [{
+    name = "Daum Work"
+    type = imap
+    account = "thomas.x@kakaocorp.com"
     folder = Inbox
     search = "UNSEEN SINCE 2021-01-01"
 }]

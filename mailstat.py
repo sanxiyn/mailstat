@@ -20,10 +20,10 @@ def parse_search(search):
             search[i] = parse_date(search_key)
     return search
 
-def imap_source(source):
+def imap_source(source, account):
     import imapclient
-    client = imapclient.IMAPClient(source["host"])
-    client.login(source["username"], source["password"])
+    client = imapclient.IMAPClient(account["host"])
+    client.login(account["username"], account["password"])
     client.select_folder(source["folder"])
     messages = client.search(parse_search(source["search"]))
     return len(messages)
@@ -34,9 +34,8 @@ source_registry = {
 
 def format_influxdb(result):
     lines = []
-    for name in result:
-        value = result[name]
-        line = f"mail,account={name} count={value}i"
+    for name, account, value in result:
+        line = f"mail,name={name},account={account} count={value}i"
         lines.append(line)
     return "\n".join(lines)
 
@@ -49,9 +48,8 @@ def influxdb_target(target, result):
 
 def format_stdout(result):
     lines = []
-    for name in result:
-        value = result[name]
-        line = f"{name} {value}"
+    for name, account, value in result:
+        line = f"{name} {account} {value}"
         lines.append(line)
     return "\n".join(lines)
 
@@ -63,14 +61,17 @@ target_registry = {
     "stdout": stdout_target,
 }
 
-def process_sources(sources):
-    result = {}
+def process_sources(sources, accounts):
+    result = []
     for source in sources:
         name = source["name"]
         type = source["type"]
+        account_name = source["account"]
+        account = [account for account in accounts
+                   if account["name"] == account_name][0]
         process_source = source_registry[type]
-        value = process_source(source)
-        result[name] = value
+        value = process_source(source, account)
+        result.append((name, account_name, value))
     return result
 
 def process_targets(targets, result):
@@ -85,12 +86,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
     config_path = os.path.expanduser(MAILSTAT_CONFIG)
     config = pyhocon.ConfigFactory.parse_file(config_path)
+    accounts = config["accounts"]
     if args.test:
         sources = [source for source in config["sources"]
-                   if source["name"] == args.test]
+                   if source["account"] == args.test]
         targets = [{"type": "stdout"}]
     else:
         sources = config["sources"]
         targets = config["targets"]
-    result = process_sources(sources)
+    result = process_sources(sources, accounts)
     process_targets(targets, result)
