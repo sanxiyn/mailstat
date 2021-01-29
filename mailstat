@@ -8,6 +8,16 @@ sources = [{
     search = "UNSEEN SINCE 2021-01-01"
 }]
 
+sources += [{
+    name = "thomas.x@kakaocorp.com"
+    type = imap
+    host = imap.kakaocorp.com
+    username = "thomas.x@kakaocorp.com"
+    password = password
+    folder = Inbox
+    search = "UNSEEN SINCE 2021-01-01"
+}]
+
 targets = [{
     type = influxdb
     url = "https://us-west-2-1.aws.cloud2.influxdata.com"
