@@ -36,7 +36,7 @@ source_registry = {
 def format_influxdb(result):
     lines = []
     for name, account, value in result:
-        line = f"mail,name={name},account={account} count={value}i"
+        line = f"mail,name={name},account={account} count={value}u"
         lines.append(line)
     return "\n".join(lines)
 
