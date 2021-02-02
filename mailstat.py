@@ -25,6 +25,10 @@ def imap_source(source, account):
     client = imapclient.IMAPClient(account["host"])
     client.login(account["username"], account["password"])
     folder = source.get("folder", "INBOX")
+    if folder.startswith("\\"):
+        flag = folder.encode("ascii")
+        folder = [name for flags, _, name in client.list_folders()
+                  if flag in flags][0]
     client.select_folder(folder)
     messages = client.search(parse_search(source["search"]))
     return len(messages)

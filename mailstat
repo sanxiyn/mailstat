@@ -22,6 +22,14 @@ sources = [{
 }]
 
 sources += [{
+    name = "Gmail Spam"
+    type = imap
+    account = "sanxiyn@gmail.com"
+    folder = "\\Junk"
+    search = "UNSEEN"
+}]
+
+sources += [{
     name = "Daum Work"
     type = imap
     account = "thomas.x@kakaocorp.com"
